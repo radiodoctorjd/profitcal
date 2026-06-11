@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatNot Profit Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0e0f11;
+    --surface:   #17191d;
+    --surface2:  #1f2228;
+    --border:    rgba(255,255,255,0.07);
+    --border-hi: rgba(255,255,255,0.13);
+    --text:      #e8e9eb;
+    --muted:     #7a7d85;
+    --faint:     #4a4d55;
+    --silver-hi: #d4daf0;
+    --gold-hi:   #f5d97a;
+    --blue:      #4a9eff;
+    --teal:      #2dd4a0;
+    --violet:    #a78bfa;
+    --amber:     #f5c542;
+    --orange:    #fb923c;
+    --yellow:    #fde68a;
+    --green:     #4ade80;
+    --radius:    10px;
+    --radius-lg: 16px;
+    --mono:      'Courier New', Courier, monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: #1f2228; border: 1px solid var(--border-hi);
+    display: flex; align-items: center; justify-content: center; font-size: 17px;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--silver-hi); letter-spacing: 0.02em; }
+  .logo-sub  { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 11px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+  .dot.err     { background: #ef4444; animation: none; }
+  .dot.loading { background: var(--amber); animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ─── Two-column layout ─── */
+  .page-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* ─── Left column ─── */
+  .left-col {
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 1.25rem;
+    background: #0b0c0e;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+
+  .left-col::-webkit-scrollbar { width: 4px; }
+  .left-col::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+  .col-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* Cost input */
+  .cost-input-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .cost-label {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 0.5rem;
+  }
+
+  .cost-field {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius);
+    padding: 0 14px;
+    margin-bottom: 0.75rem;
+  }
+
+  .cost-field span { font-size: 22px; color: var(--muted); font-family: var(--mono); }
+
+  .cost-field input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-family: var(--mono);
+    font-size: 28px; font-weight: 700;
+    width: 100%; padding: 12px 0;
+  }
+
+  .cost-field input::placeholder { color: var(--faint); }
+
+  .cost-clear {
+    background: none; border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--muted);
+    font-size: 12px; padding: 6px 14px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .cost-clear:hover { background: var(--surface2); color: var(--text); }
+
+  /* Result cards — left column */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.1rem;
+    margin-bottom: 10px;
+    position: relative; overflow: hidden;
+  }
+
+  .result-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+
+  .result-card.c1::before { background: var(--blue); }
+  .result-card.c2::before { background: var(--teal); }
+  .result-card.c3::before { background: var(--violet); }
+  .result-card.c4::before { background: var(--orange); }
+  .result-card.c5::before { background: var(--green); }
+
+  .result-card-title {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .result-card.c1 .result-card-title { color: var(--blue); }
+  .result-card.c2 .result-card-title { color: var(--teal); }
+  .result-card.c3 .result-card-title { color: var(--violet); }
+  .result-card.c4 .result-card-title { color: var(--orange); }
+  .result-card.c5 .result-card-title { color: var(--green); }
+
+  .result-card-sub { font-size: 10px; color: var(--muted); margin-bottom: 0.6rem; }
+
+  .result-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+  .result-label { font-size: 11px; color: var(--muted); }
+
+  .result-val {
+    font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text);
+  }
+
+  .result-profit {
+    font-family: var(--mono); font-size: 17px; font-weight: 600;
+  }
+
+  .result-card.c1 .result-profit { color: var(--blue); }
+  .result-card.c2 .result-profit { color: var(--teal); }
+  .result-card.c3 .result-profit { color: var(--violet); }
+  .result-card.c4 .result-profit { color: var(--orange); }
+  .result-card.c5 .result-profit { color: var(--green); }
+
+  .result-empty {
+    text-align: center; color: var(--faint);
+    font-size: 13px; padding: 2rem 0;
+  }
+
+  /* ─── Right column ─── */
+  .right-col {
+    padding: 1.5rem 1.5rem 3rem;
+    overflow-y: auto;
+  }
+
+  /* ─── Section dividers ─── */
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin: 1.75rem 0 1rem;
+  }
+  .section-header:first-child { margin-top: 0; }
+
+  .section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .section-title.silver { color: var(--silver-hi); }
+  .section-title.gold   { color: var(--gold-hi); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── Spot hero ─── */
+  .spot-hero {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+  }
+  .spot-hero.silver { background: var(--surface); border-color: rgba(212,218,240,0.1); }
+  .spot-hero.gold   { background: #16140e; border-color: rgba(245,217,122,0.12); }
+
+  .spot-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+
+  .spot-price {
+    font-family: var(--mono); font-size: 44px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1;
+    margin-bottom: 0.35rem; min-height: 44px;
+  }
+  .spot-hero.silver .spot-price { color: var(--silver-hi); }
+  .spot-hero.gold   .spot-price { color: var(--gold-hi); }
+
+  .spot-meta { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+
+  .spot-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .override-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border-hi);
+    border-radius: var(--radius);
+    padding: 0 12px; flex: 1; min-width: 150px; max-width: 240px;
+  }
+  .override-wrap label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .override-wrap input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-family: var(--mono);
+    font-size: 14px; width: 100%; padding: 8px 0;
+  }
+  .override-wrap input::placeholder { color: var(--faint); }
+
+  button.refresh {
+    background: var(--surface2); border: 1px solid var(--border-hi);
+    border-radius: var(--radius); color: var(--text); font-size: 13px;
+    padding: 8px 16px; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: background 0.15s; white-space: nowrap;
+  }
+  button.refresh:hover  { background: #2a2d36; }
+  button.refresh:active { transform: scale(0.98); }
+
+  .error-msg {
+    margin-top: 10px; font-size: 13px; color: #f87171;
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius); padding: 7px 12px; display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ─── Cards ─── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px; margin-bottom: 1rem;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .silver-section .card { background: var(--surface); }
+  .silver-section .card.blue::before   { background: var(--blue); }
+  .silver-section .card.teal::before   { background: var(--teal); }
+  .silver-section .card.violet::before { background: var(--violet); }
+  .silver-section .card.blue   .card-pct    { color: var(--blue); }
+  .silver-section .card.teal   .card-pct    { color: var(--teal); }
+  .silver-section .card.violet .card-pct    { color: var(--violet); }
+  .silver-section .card.blue   .card-profit { color: var(--blue); }
+  .silver-section .card.teal   .card-profit { color: var(--teal); }
+  .silver-section .card.violet .card-profit { color: var(--violet); }
+  .silver-section .card.blue   .progress-fill { background: var(--blue); }
+  .silver-section .card.teal   .progress-fill { background: var(--teal); }
+  .silver-section .card.violet .progress-fill { background: var(--violet); }
+
+  .gold-section .card { background: #16140e; }
+  .gold-section .card.g1::before { background: var(--amber); }
+  .gold-section .card.g2::before { background: var(--orange); }
+  .gold-section .card.g3::before { background: var(--yellow); }
+  .gold-section .card.g1 .card-pct    { color: var(--amber); }
+  .gold-section .card.g2 .card-pct    { color: var(--orange); }
+  .gold-section .card.g3 .card-pct    { color: var(--yellow); }
+  .gold-section .card.g1 .card-profit { color: var(--amber); }
+  .gold-section .card.g2 .card-profit { color: var(--orange); }
+  .gold-section .card.g3 .card-profit { color: var(--yellow); }
+  .gold-section .card.g1 .progress-fill { background: var(--amber); }
+  .gold-section .card.g2 .progress-fill { background: var(--orange); }
+  .gold-section .card.g3 .progress-fill { background: var(--yellow); }
+
+  .card-pct { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .card-sell-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+  .card-sell { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; min-height: 29px; }
+  .card-profit-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+  .card-profit { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+
+  .progress { height: 3px; background: var(--border); border-radius: 2px; margin-top: 0.75rem; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+  /* ─── Summary ─── */
+  .summary {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .silver-section .summary { background: var(--surface); }
+  .gold-section   .summary { background: #16140e; border-color: rgba(245,217,122,0.1); }
+
+  .summary-item { text-align: center; flex: 1; min-width: 80px; }
+  .summary-item-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .summary-item-val   { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--text); }
+  .divider { width: 1px; height: 32px; background: var(--border); }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center; padding: 1.5rem;
+    font-size: 11px; color: var(--faint);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .page-grid { grid-template-columns: 1fr; }
+    .left-col  { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .cards     { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .spot-price { font-size: 34px; }
+  }
+
+  /* SVG icon */
+  .svg-icon { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚖️</div>
+    <div>
+      <div class="logo-text">WhatNot Profit Calculator</div>
+      <div class="logo-sub">WhatNot profit tracker</div>
+    </div>
+  </div>
+  <div class="badges">
+    <div class="live-badge">
+      <div class="dot loading" id="dot-silver"></div>
+      <span id="badge-silver">Silver…</span>
+      <span id="countdown-silver" style="color:var(--faint);margin-left:2px;"></span>
+    </div>
+    <div class="live-badge">
+      <div class="dot loading" id="dot-gold"></div>
+      <span id="badge-gold">Gold…</span>
+      <span id="countdown-gold" style="color:var(--faint);margin-left:2px;"></span>
+    </div>
+  </div>
+</header>
+
+<div class="page-grid">
+
+  <!-- ══════════ LEFT COLUMN — Custom Calculator ══════════ -->
+  <div class="left-col">
+    <div class="col-title">Item Cost Calculator</div>
+
+    <div class="cost-input-wrap">
+      <div class="cost-label">What did you pay?</div>
+      <div class="cost-field">
+        <span>$</span>
+        <input type="number" id="item-cost" placeholder="0.00" step="0.01" min="0" oninput="recalcItem()" />
+      </div>
+      <button class="cost-clear" onclick="clearItem()">Clear</button>
+    </div>
+
+    <div id="item-results">
+      <div class="result-empty">Enter a cost above to see your sell targets.</div>
+    </div>
+  </div>
+
+  <!-- ══════════ RIGHT COLUMN — Live Metals ══════════ -->
+  <div class="right-col">
+
+    <!-- Silver -->
+    <div class="section-header">
+      <span class="section-title silver">🥈 Silver</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="silver-section">
+      <div class="spot-hero silver">
+        <div class="spot-label">Spot price · XAG/USD · per troy ounce</div>
+        <div class="spot-price" id="silver-spot-display">—</div>
+        <div class="spot-meta" id="silver-last-updated">Fetching live silver price…</div>
+        <div class="spot-controls">
+          <div class="override-wrap">
+            <label for="silver-custom">Override $</label>
+            <input type="number" id="silver-custom" placeholder="e.g. 31.50" step="0.01" min="0" oninput="recalcSilver()" />
+          </div>
+          <button class="refresh" onclick="fetchSilver()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="error-msg" id="silver-error">Live price fetch failed. Enter a spot price manually above.</div>
+      </div>
+
+      <div class="cards">
+        <div class="card blue">
+          <div class="card-pct">Cover WhatNot Fees</div>
+          <div class="card-sell-label">8% fees · break even</div>
+          <div class="card-sell" id="s-val-8">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="s-profit-8">—</div>
+          <div class="progress"><div class="progress-fill" style="width:8%"></div></div>
+        </div>
+        <div class="card teal">
+          <div class="card-pct">10% Profit</div>
+          <div class="card-sell-label">10% profit + 8% fees = 18% total</div>
+          <div class="card-sell" id="s-val-10">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="s-profit-10">—</div>
+          <div class="progress"><div class="progress-fill" style="width:18%"></div></div>
+        </div>
+        <div class="card violet">
+          <div class="card-pct">20% Profit</div>
+          <div class="card-sell-label">20% profit + 8% fees = 28% total</div>
+          <div class="card-sell" id="s-val-20">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="s-profit-20">—</div>
+          <div class="progress"><div class="progress-fill" style="width:28%"></div></div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-item">
+          <div class="summary-item-label">Spot / oz</div>
+          <div class="summary-item-val" id="s-sum-spot">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">Break even</div>
+          <div class="summary-item-val" id="s-sum-8">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">10% profit</div>
+          <div class="summary-item-val" id="s-sum-10">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">20% profit</div>
+          <div class="summary-item-val" id="s-sum-20">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gold -->
+    <div class="section-header" style="margin-top:2rem;">
+      <span class="section-title gold">🥇 Gold</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="gold-section">
+      <div class="spot-hero gold">
+        <div class="spot-label">Spot price · XAU/USD · per gram</div>
+        <div class="spot-price" id="gold-spot-display">—</div>
+        <div class="spot-meta" id="gold-last-updated">Fetching live gold price…</div>
+        <div class="spot-controls">
+          <div class="override-wrap">
+            <label for="gold-custom">Override $</label>
+            <input type="number" id="gold-custom" placeholder="e.g. 98.50" step="0.01" min="0" oninput="recalcGold()" />
+          </div>
+          <button class="refresh" onclick="fetchGold()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="error-msg" id="gold-error">Live price fetch failed. Enter a spot price manually above.</div>
+      </div>
+
+      <div class="cards">
+        <div class="card g1">
+          <div class="card-pct">Cover WhatNot Fees</div>
+          <div class="card-sell-label">8% fees · break even</div>
+          <div class="card-sell" id="g-val-8">—</div>
+          <div class="card-profit-label">Net profit per gram</div>
+          <div class="card-profit" id="g-profit-8">—</div>
+          <div class="progress"><div class="progress-fill" style="width:8%"></div></div>
+        </div>
+        <div class="card g2">
+          <div class="card-pct">10% Profit</div>
+          <div class="card-sell-label">10% profit + 8% fees = 18% total</div>
+          <div class="card-sell" id="g-val-10">—</div>
+          <div class="card-profit-label">Net profit per gram</div>
+          <div class="card-profit" id="g-profit-10">—</div>
+          <div class="progress"><div class="progress-fill" style="width:18%"></div></div>
+        </div>
+        <div class="card g3">
+          <div class="card-pct">20% Profit</div>
+          <div class="card-sell-label">20% profit + 8% fees = 28% total</div>
+          <div class="card-sell" id="g-val-20">—</div>
+          <div class="card-profit-label">Net profit per gram</div>
+          <div class="card-profit" id="g-profit-20">—</div>
+          <div class="progress"><div class="progress-fill" style="width:28%"></div></div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-item">
+          <div class="summary-item-label">Spot / gram</div>
+          <div class="summary-item-val" id="g-sum-spot">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">Break even</div>
+          <div class="summary-item-val" id="g-sum-8">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">10% profit</div>
+          <div class="summary-item-val" id="g-sum-10">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">20% profit</div>
+          <div class="summary-item-val" id="g-sum-20">—</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right-col -->
+</div><!-- /page-grid -->
+
+<footer>
+  Silver: USD per troy oz · Gold: USD per gram (oz ÷ 31.1035) · WhatNot fees 8% · Not financial advice
+</footer>
+
+<script>
+  const TROY_OZ_TO_GRAMS = 31.1035;
+  let liveSpotSilver = null;
+  let liveSpotGold   = null;
+
+  function fmt(v) { return '$' + v.toFixed(2); }
+
+  /* ─── Left column: item cost calculator ─── */
+  function recalcItem() {
+    const cost = parseFloat(document.getElementById('item-cost').value);
+    const el   = document.getElementById('item-results');
+
+    if (isNaN(cost) || cost <= 0) {
+      el.innerHTML = '<div class="result-empty">Enter a cost above to see your sell targets.</div>';
+      return;
+    }
+
+    const sell8  = cost * 1.08;
+    const sell10 = cost * 1.18;
+    const sell20 = cost * 1.28;
+    const sell30 = cost * 1.38;
+    const sell40 = cost * 1.48;
+
+    el.innerHTML = `
+      <div class="result-card c1">
+        <div class="result-card-title">Cover WhatNot Fees</div>
+        <div class="result-card-sub">8% fees · break even</div>
+        <div class="result-row">
+          <span class="result-label">Sell at</span>
+          <span class="result-val">${fmt(sell8)}</span>
+        </div>
+        <div class="result-row" style="margin-top:4px;">
+          <span class="result-label">Net profit</span>
+          <span class="result-profit">$0.00</span>
+        </div>
+      </div>
+
+      <div class="result-card c2">
+        <div class="result-card-title">10% Profit</div>
+        <div class="result-card-sub">10% profit + 8% fees = 18% total</div>
+        <div class="result-row">
+          <span class="result-label">Sell at</span>
+          <span class="result-val">${fmt(sell10)}</span>
+        </div>
+        <div class="result-row" style="margin-top:4px;">
+          <span class="result-label">Net profit</span>
+          <span class="result-profit">+${fmt(cost * 0.10)}</span>
+        </div>
+      </div>
+
+      <div class="result-card c3">
+        <div class="result-card-title">20% Profit</div>
+        <div class="result-card-sub">20% profit + 8% fees = 28% total</div>
+        <div class="result-row">
+          <span class="result-label">Sell at</span>
+          <span class="result-val">${fmt(sell20)}</span>
+        </div>
+        <div class="result-row" style="margin-top:4px;">
+          <span class="result-label">Net profit</span>
+          <span class="result-profit">+${fmt(cost * 0.20)}</span>
+        </div>
+      </div>
+
+      <div class="result-card c4">
+        <div class="result-card-title">30% Profit</div>
+        <div class="result-card-sub">30% profit + 8% fees = 38% total</div>
+        <div class="result-row">
+          <span class="result-label">Sell at</span>
+          <span class="result-val">${fmt(sell30)}</span>
+        </div>
+        <div class="result-row" style="margin-top:4px;">
+          <span class="result-label">Net profit</span>
+          <span class="result-profit">+${fmt(cost * 0.30)}</span>
+        </div>
+      </div>
+
+      <div class="result-card c5">
+        <div class="result-card-title">40% Profit</div>
+        <div class="result-card-sub">40% profit + 8% fees = 48% total</div>
+        <div class="result-row">
+          <span class="result-label">Sell at</span>
+          <span class="result-val">${fmt(sell40)}</span>
+        </div>
+        <div class="result-row" style="margin-top:4px;">
+          <span class="result-label">Net profit</span>
+          <span class="result-profit">+${fmt(cost * 0.40)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function clearItem() {
+    document.getElementById('item-cost').value = '';
+    recalcItem();
+  }
+
+  /* ─── Silver ─── */
+  function recalcSilver() {
+    const custom = parseFloat(document.getElementById('silver-custom').value);
+    const spot = (!isNaN(custom) && custom > 0) ? custom : liveSpotSilver;
+    if (!spot) return;
+    document.getElementById('s-sum-spot').textContent = fmt(spot);
+    const s8 = spot*1.08, s10 = spot*1.18, s20 = spot*1.28;
+    document.getElementById('s-val-8').textContent     = fmt(s8);
+    document.getElementById('s-profit-8').textContent  = '$0.00';
+    document.getElementById('s-sum-8').textContent     = fmt(s8);
+    document.getElementById('s-val-10').textContent    = fmt(s10);
+    document.getElementById('s-profit-10').textContent = '+' + fmt(spot*0.10);
+    document.getElementById('s-sum-10').textContent    = fmt(s10);
+    document.getElementById('s-val-20').textContent    = fmt(s20);
+    document.getElementById('s-profit-20').textContent = '+' + fmt(spot*0.20);
+    document.getElementById('s-sum-20').textContent    = fmt(s20);
+  }
+
+  /* ─── Gold ─── */
+  function recalcGold() {
+    const custom = parseFloat(document.getElementById('gold-custom').value);
+    const spot = (!isNaN(custom) && custom > 0) ? custom : liveSpotGold;
+    if (!spot) return;
+    document.getElementById('g-sum-spot').textContent = fmt(spot);
+    const g8 = spot*1.08, g10 = spot*1.18, g20 = spot*1.28;
+    document.getElementById('g-val-8').textContent     = fmt(g8);
+    document.getElementById('g-profit-8').textContent  = '$0.00';
+    document.getElementById('g-sum-8').textContent     = fmt(g8);
+    document.getElementById('g-val-10').textContent    = fmt(g10);
+    document.getElementById('g-profit-10').textContent = '+' + fmt(spot*0.10);
+    document.getElementById('g-sum-10').textContent    = fmt(g10);
+    document.getElementById('g-val-20').textContent    = fmt(g20);
+    document.getElementById('g-profit-20').textContent = '+' + fmt(spot*0.20);
+    document.getElementById('g-sum-20').textContent    = fmt(g20);
+  }
+
+  /* ─── Status helper ─── */
+  function setStatus(metal, state) {
+    const dot   = document.getElementById('dot-' + metal);
+    const badge = document.getElementById('badge-' + metal);
+    if (state === 'loading') { dot.className = 'dot loading'; badge.textContent = metal === 'silver' ? 'Silver…' : 'Gold…'; }
+    if (state === 'live')    { dot.className = 'dot';         badge.textContent = metal === 'silver' ? 'Silver' : 'Gold'; }
+    if (state === 'err')     { dot.className = 'dot err';     badge.textContent = metal === 'silver' ? 'Silver offline' : 'Gold offline'; }
+  }
+
+  /* ─── Fetch silver ─── */
+  async function fetchSilver() {
+    setStatus('silver', 'loading');
+    document.getElementById('silver-error').classList.remove('show');
+    try {
+      const res  = await fetch('https://api.gold-api.com/price/XAG');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (!data.price) throw new Error();
+      liveSpotSilver = parseFloat(data.price);
+      document.getElementById('silver-spot-display').textContent = fmt(liveSpotSilver);
+      const now = new Date();
+      document.getElementById('silver-last-updated').textContent =
+        'Last updated ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) +
+        ' · ' + now.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+      setStatus('silver', 'live');
+      recalcSilver();
+    } catch {
+      setStatus('silver', 'err');
+      document.getElementById('silver-last-updated').textContent = 'Could not fetch live price.';
+      document.getElementById('silver-error').classList.add('show');
+    }
+  }
+
+  /* ─── Fetch gold ─── */
+  async function fetchGold() {
+    setStatus('gold', 'loading');
+    document.getElementById('gold-error').classList.remove('show');
+    try {
+      const res  = await fetch('https://api.gold-api.com/price/XAU');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (!data.price) throw new Error();
+      liveSpotGold = parseFloat(data.price) / TROY_OZ_TO_GRAMS;
+      document.getElementById('gold-spot-display').textContent = fmt(liveSpotGold);
+      const now = new Date();
+      document.getElementById('gold-last-updated').textContent =
+        'Last updated ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) +
+        ' · ' + now.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}) +
+        ' (oz ÷ 31.1035)';
+      setStatus('gold', 'live');
+      recalcGold();
+    } catch {
+      setStatus('gold', 'err');
+      document.getElementById('gold-last-updated').textContent = 'Could not fetch live price.';
+      document.getElementById('gold-error').classList.add('show');
+    }
+  }
+
+  /* ─── Countdown factory ─── */
+  function makeCountdown(metal, fetchFn) {
+    let timer = null;
+    let secs  = 30;
+    const el  = () => document.getElementById('countdown-' + metal);
+
+    function tick() {
+      secs--;
+      if (el()) el().textContent = secs + 's';
+      if (secs <= 0) { clearInterval(timer); fetchFn().then(start); }
+    }
+
+    function start() {
+      clearInterval(timer);
+      secs = 30;
+      if (el()) el().textContent = '30s';
+      timer = setInterval(tick, 1000);
+    }
+
+    return { start };
+  }
+
+  const silverCd = makeCountdown('silver', fetchSilver);
+  const goldCd   = makeCountdown('gold',   fetchGold);
+
+  fetchSilver().then(() => silverCd.start());
+  setTimeout(() => fetchGold().then(() => goldCd.start()), 2000);
+</script>
+</body>
+</html>

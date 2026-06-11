@@ -25,6 +25,14 @@
     --orange:    #fb923c;
     --yellow:    #fde68a;
     --green:     #4ade80;
+    --plat-hi:   #e2e8f0;
+    --plat-1:    #94a3b8;
+    --plat-2:    #cbd5e1;
+    --plat-3:    #e2e8f0;
+    --pall-hi:   #c4b5fd;
+    --pall-1:    #a78bfa;
+    --pall-2:    #c4b5fd;
+    --pall-3:    #ddd6fe;
     --radius:    10px;
     --radius-lg: 16px;
     --mono:      'Courier New', Courier, monospace;
@@ -214,8 +222,10 @@
   .section-header:first-child { margin-top: 0; }
 
   .section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-  .section-title.silver { color: var(--silver-hi); }
-  .section-title.gold   { color: var(--gold-hi); }
+  .section-title.silver   { color: var(--silver-hi); }
+  .section-title.gold     { color: var(--gold-hi); }
+  .section-title.platinum { color: var(--plat-hi); }
+  .section-title.palladium{ color: var(--pall-hi); }
   .section-line { flex: 1; height: 1px; background: var(--border); }
 
   /* ─── Spot hero ─── */
@@ -225,8 +235,10 @@
     padding: 1.5rem 1.75rem;
     margin-bottom: 1rem;
   }
-  .spot-hero.silver { background: var(--surface); border-color: rgba(212,218,240,0.1); }
-  .spot-hero.gold   { background: #16140e; border-color: rgba(245,217,122,0.12); }
+  .spot-hero.silver   { background: var(--surface); border-color: rgba(212,218,240,0.1); }
+  .spot-hero.gold     { background: #16140e; border-color: rgba(245,217,122,0.12); }
+  .spot-hero.platinum { background: #0f1117; border-color: rgba(148,163,184,0.15); }
+  .spot-hero.palladium{ background: #100e17; border-color: rgba(167,139,250,0.15); }
 
   .spot-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
 
@@ -235,8 +247,10 @@
     letter-spacing: -0.02em; line-height: 1;
     margin-bottom: 0.35rem; min-height: 44px;
   }
-  .spot-hero.silver .spot-price { color: var(--silver-hi); }
-  .spot-hero.gold   .spot-price { color: var(--gold-hi); }
+  .spot-hero.silver   .spot-price { color: var(--silver-hi); }
+  .spot-hero.gold     .spot-price { color: var(--gold-hi); }
+  .spot-hero.platinum .spot-price { color: var(--plat-hi); }
+  .spot-hero.palladium .spot-price{ color: var(--pall-hi); }
 
   .spot-meta { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
 
@@ -320,6 +334,36 @@
   .gold-section .card.g2 .progress-fill { background: var(--orange); }
   .gold-section .card.g3 .progress-fill { background: var(--yellow); }
 
+  .platinum-section .card { background: #0f1117; }
+  .platinum-section .card.p1::before { background: var(--plat-1); }
+  .platinum-section .card.p2::before { background: var(--plat-2); }
+  .platinum-section .card.p3::before { background: var(--plat-3); }
+  .platinum-section .card.p1 .card-pct    { color: var(--plat-1); }
+  .platinum-section .card.p2 .card-pct    { color: var(--plat-2); }
+  .platinum-section .card.p3 .card-pct    { color: var(--plat-3); }
+  .platinum-section .card.p1 .card-profit { color: var(--plat-1); }
+  .platinum-section .card.p2 .card-profit { color: var(--plat-2); }
+  .platinum-section .card.p3 .card-profit { color: var(--plat-3); }
+  .platinum-section .card.p1 .progress-fill { background: var(--plat-1); }
+  .platinum-section .card.p2 .progress-fill { background: var(--plat-2); }
+  .platinum-section .card.p3 .progress-fill { background: var(--plat-3); }
+  .platinum-section .summary { background: #0f1117; border-color: rgba(148,163,184,0.1); }
+
+  .palladium-section .card { background: #100e17; }
+  .palladium-section .card.d1::before { background: var(--pall-1); }
+  .palladium-section .card.d2::before { background: var(--pall-2); }
+  .palladium-section .card.d3::before { background: var(--pall-3); }
+  .palladium-section .card.d1 .card-pct    { color: var(--pall-1); }
+  .palladium-section .card.d2 .card-pct    { color: var(--pall-2); }
+  .palladium-section .card.d3 .card-pct    { color: var(--pall-3); }
+  .palladium-section .card.d1 .card-profit { color: var(--pall-1); }
+  .palladium-section .card.d2 .card-profit { color: var(--pall-2); }
+  .palladium-section .card.d3 .card-profit { color: var(--pall-3); }
+  .palladium-section .card.d1 .progress-fill { background: var(--pall-1); }
+  .palladium-section .card.d2 .progress-fill { background: var(--pall-2); }
+  .palladium-section .card.d3 .progress-fill { background: var(--pall-3); }
+  .palladium-section .summary { background: #100e17; border-color: rgba(167,139,250,0.1); }
+
   .card-pct { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.4rem; }
   .card-sell-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
   .card-sell { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; min-height: 29px; }
@@ -340,7 +384,6 @@
   }
   .silver-section .summary { background: var(--surface); }
   .gold-section   .summary { background: #16140e; border-color: rgba(245,217,122,0.1); }
-
   .summary-item { text-align: center; flex: 1; min-width: 80px; }
   .summary-item-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
   .summary-item-val   { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--text); }
@@ -388,6 +431,16 @@
       <div class="dot loading" id="dot-gold"></div>
       <span id="badge-gold">Gold…</span>
       <span id="countdown-gold" style="color:var(--faint);margin-left:2px;"></span>
+    </div>
+    <div class="live-badge">
+      <div class="dot loading" id="dot-platinum"></div>
+      <span id="badge-platinum">Platinum…</span>
+      <span id="countdown-platinum" style="color:var(--faint);margin-left:2px;"></span>
+    </div>
+    <div class="live-badge">
+      <div class="dot loading" id="dot-palladium"></div>
+      <span id="badge-palladium">Palladium…</span>
+      <span id="countdown-palladium" style="color:var(--faint);margin-left:2px;"></span>
     </div>
   </div>
 </header>
@@ -563,17 +616,167 @@
       </div>
     </div>
 
+    <!-- Platinum -->
+    <div class="section-header" style="margin-top:2rem;">
+      <span class="section-title platinum">🔩 Platinum</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="platinum-section">
+      <div class="spot-hero platinum">
+        <div class="spot-label">Spot price · XPT/USD · per troy ounce</div>
+        <div class="spot-price" id="platinum-spot-display">—</div>
+        <div class="spot-meta" id="platinum-last-updated">Fetching live platinum price…</div>
+        <div class="spot-controls">
+          <div class="override-wrap">
+            <label for="platinum-custom">Override $</label>
+            <input type="number" id="platinum-custom" placeholder="e.g. 980.00" step="0.01" min="0" oninput="recalcPlatinum()" />
+          </div>
+          <button class="refresh" onclick="fetchPlatinum()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="error-msg" id="platinum-error">Live price fetch failed. Enter a spot price manually above.</div>
+      </div>
+
+      <div class="cards">
+        <div class="card p1">
+          <div class="card-pct">Cover WhatNot Fees</div>
+          <div class="card-sell-label">8% fees · break even</div>
+          <div class="card-sell" id="pt-val-8">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pt-profit-8">—</div>
+          <div class="progress"><div class="progress-fill" style="width:8%"></div></div>
+        </div>
+        <div class="card p2">
+          <div class="card-pct">10% Profit</div>
+          <div class="card-sell-label">10% profit + 8% fees = 18% total</div>
+          <div class="card-sell" id="pt-val-10">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pt-profit-10">—</div>
+          <div class="progress"><div class="progress-fill" style="width:18%"></div></div>
+        </div>
+        <div class="card p3">
+          <div class="card-pct">20% Profit</div>
+          <div class="card-sell-label">20% profit + 8% fees = 28% total</div>
+          <div class="card-sell" id="pt-val-20">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pt-profit-20">—</div>
+          <div class="progress"><div class="progress-fill" style="width:28%"></div></div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-item">
+          <div class="summary-item-label">Spot / oz</div>
+          <div class="summary-item-val" id="pt-sum-spot">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">Break even</div>
+          <div class="summary-item-val" id="pt-sum-8">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">10% profit</div>
+          <div class="summary-item-val" id="pt-sum-10">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">20% profit</div>
+          <div class="summary-item-val" id="pt-sum-20">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Palladium -->
+    <div class="section-header" style="margin-top:2rem;">
+      <span class="section-title palladium">💎 Palladium</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="palladium-section">
+      <div class="spot-hero palladium">
+        <div class="spot-label">Spot price · XPD/USD · per troy ounce</div>
+        <div class="spot-price" id="palladium-spot-display">—</div>
+        <div class="spot-meta" id="palladium-last-updated">Fetching live palladium price…</div>
+        <div class="spot-controls">
+          <div class="override-wrap">
+            <label for="palladium-custom">Override $</label>
+            <input type="number" id="palladium-custom" placeholder="e.g. 1050.00" step="0.01" min="0" oninput="recalcPalladium()" />
+          </div>
+          <button class="refresh" onclick="fetchPalladium()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="error-msg" id="palladium-error">Live price fetch failed. Enter a spot price manually above.</div>
+      </div>
+
+      <div class="cards">
+        <div class="card d1">
+          <div class="card-pct">Cover WhatNot Fees</div>
+          <div class="card-sell-label">8% fees · break even</div>
+          <div class="card-sell" id="pd-val-8">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pd-profit-8">—</div>
+          <div class="progress"><div class="progress-fill" style="width:8%"></div></div>
+        </div>
+        <div class="card d2">
+          <div class="card-pct">10% Profit</div>
+          <div class="card-sell-label">10% profit + 8% fees = 18% total</div>
+          <div class="card-sell" id="pd-val-10">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pd-profit-10">—</div>
+          <div class="progress"><div class="progress-fill" style="width:18%"></div></div>
+        </div>
+        <div class="card d3">
+          <div class="card-pct">20% Profit</div>
+          <div class="card-sell-label">20% profit + 8% fees = 28% total</div>
+          <div class="card-sell" id="pd-val-20">—</div>
+          <div class="card-profit-label">Net profit per oz</div>
+          <div class="card-profit" id="pd-profit-20">—</div>
+          <div class="progress"><div class="progress-fill" style="width:28%"></div></div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-item">
+          <div class="summary-item-label">Spot / oz</div>
+          <div class="summary-item-val" id="pd-sum-spot">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">Break even</div>
+          <div class="summary-item-val" id="pd-sum-8">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">10% profit</div>
+          <div class="summary-item-val" id="pd-sum-10">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="summary-item">
+          <div class="summary-item-label">20% profit</div>
+          <div class="summary-item-val" id="pd-sum-20">—</div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /right-col -->
 </div><!-- /page-grid -->
 
 <footer>
-  Silver: USD per troy oz · Gold: USD per gram (oz ÷ 31.1035) · WhatNot fees 8% · Not financial advice
+  Silver & Platinum & Palladium: USD per troy oz · Gold: USD per gram (oz ÷ 31.1035) · WhatNot fees 8% · Not financial advice
 </footer>
 
 <script>
   const TROY_OZ_TO_GRAMS = 31.1035;
-  let liveSpotSilver = null;
-  let liveSpotGold   = null;
+  let liveSpotSilver   = null;
+  let liveSpotGold     = null;
+  let liveSpotPlatinum = null;
+  let liveSpotPalladium= null;
 
   function fmt(v) { return '$' + v.toFixed(2); }
 
@@ -702,13 +905,49 @@
     document.getElementById('g-sum-20').textContent    = fmt(g20);
   }
 
-  /* ─── Status helper ─── */
+  /* ─── Platinum ─── */
+  function recalcPlatinum() {
+    const custom = parseFloat(document.getElementById('platinum-custom').value);
+    const spot = (!isNaN(custom) && custom > 0) ? custom : liveSpotPlatinum;
+    if (!spot) return;
+    document.getElementById('pt-sum-spot').textContent = fmt(spot);
+    const v8 = spot*1.08, v10 = spot*1.18, v20 = spot*1.28;
+    document.getElementById('pt-val-8').textContent     = fmt(v8);
+    document.getElementById('pt-profit-8').textContent  = '$0.00';
+    document.getElementById('pt-sum-8').textContent     = fmt(v8);
+    document.getElementById('pt-val-10').textContent    = fmt(v10);
+    document.getElementById('pt-profit-10').textContent = '+' + fmt(spot*0.10);
+    document.getElementById('pt-sum-10').textContent    = fmt(v10);
+    document.getElementById('pt-val-20').textContent    = fmt(v20);
+    document.getElementById('pt-profit-20').textContent = '+' + fmt(spot*0.20);
+    document.getElementById('pt-sum-20').textContent    = fmt(v20);
+  }
+
+  /* ─── Palladium ─── */
+  function recalcPalladium() {
+    const custom = parseFloat(document.getElementById('palladium-custom').value);
+    const spot = (!isNaN(custom) && custom > 0) ? custom : liveSpotPalladium;
+    if (!spot) return;
+    document.getElementById('pd-sum-spot').textContent = fmt(spot);
+    const v8 = spot*1.08, v10 = spot*1.18, v20 = spot*1.28;
+    document.getElementById('pd-val-8').textContent     = fmt(v8);
+    document.getElementById('pd-profit-8').textContent  = '$0.00';
+    document.getElementById('pd-sum-8').textContent     = fmt(v8);
+    document.getElementById('pd-val-10').textContent    = fmt(v10);
+    document.getElementById('pd-profit-10').textContent = '+' + fmt(spot*0.10);
+    document.getElementById('pd-sum-10').textContent    = fmt(v10);
+    document.getElementById('pd-val-20').textContent    = fmt(v20);
+    document.getElementById('pd-profit-20').textContent = '+' + fmt(spot*0.20);
+    document.getElementById('pd-sum-20').textContent    = fmt(v20);
+  }
   function setStatus(metal, state) {
     const dot   = document.getElementById('dot-' + metal);
     const badge = document.getElementById('badge-' + metal);
-    if (state === 'loading') { dot.className = 'dot loading'; badge.textContent = metal === 'silver' ? 'Silver…' : 'Gold…'; }
-    if (state === 'live')    { dot.className = 'dot';         badge.textContent = metal === 'silver' ? 'Silver' : 'Gold'; }
-    if (state === 'err')     { dot.className = 'dot err';     badge.textContent = metal === 'silver' ? 'Silver offline' : 'Gold offline'; }
+    const names = { silver: 'Silver', gold: 'Gold', platinum: 'Platinum', palladium: 'Palladium' };
+    const name  = names[metal] || metal;
+    if (state === 'loading') { dot.className = 'dot loading'; badge.textContent = name + '…'; }
+    if (state === 'live')    { dot.className = 'dot';         badge.textContent = name; }
+    if (state === 'err')     { dot.className = 'dot err';     badge.textContent = name + ' offline'; }
   }
 
   /* ─── Fetch silver ─── */
@@ -760,6 +999,54 @@
     }
   }
 
+  /* ─── Fetch platinum ─── */
+  async function fetchPlatinum() {
+    setStatus('platinum', 'loading');
+    document.getElementById('platinum-error').classList.remove('show');
+    try {
+      const res  = await fetch('https://api.gold-api.com/price/XPT');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (!data.price) throw new Error();
+      liveSpotPlatinum = parseFloat(data.price);
+      document.getElementById('platinum-spot-display').textContent = fmt(liveSpotPlatinum);
+      const now = new Date();
+      document.getElementById('platinum-last-updated').textContent =
+        'Last updated ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) +
+        ' · ' + now.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+      setStatus('platinum', 'live');
+      recalcPlatinum();
+    } catch {
+      setStatus('platinum', 'err');
+      document.getElementById('platinum-last-updated').textContent = 'Could not fetch live price.';
+      document.getElementById('platinum-error').classList.add('show');
+    }
+  }
+
+  /* ─── Fetch palladium ─── */
+  async function fetchPalladium() {
+    setStatus('palladium', 'loading');
+    document.getElementById('palladium-error').classList.remove('show');
+    try {
+      const res  = await fetch('https://api.gold-api.com/price/XPD');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (!data.price) throw new Error();
+      liveSpotPalladium = parseFloat(data.price);
+      document.getElementById('palladium-spot-display').textContent = fmt(liveSpotPalladium);
+      const now = new Date();
+      document.getElementById('palladium-last-updated').textContent =
+        'Last updated ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) +
+        ' · ' + now.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+      setStatus('palladium', 'live');
+      recalcPalladium();
+    } catch {
+      setStatus('palladium', 'err');
+      document.getElementById('palladium-last-updated').textContent = 'Could not fetch live price.';
+      document.getElementById('palladium-error').classList.add('show');
+    }
+  }
+
   /* ─── Countdown factory ─── */
   function makeCountdown(metal, fetchFn) {
     let timer = null;
@@ -782,11 +1069,15 @@
     return { start };
   }
 
-  const silverCd = makeCountdown('silver', fetchSilver);
-  const goldCd   = makeCountdown('gold',   fetchGold);
+  const silverCd   = makeCountdown('silver',   fetchSilver);
+  const goldCd     = makeCountdown('gold',     fetchGold);
+  const platinumCd = makeCountdown('platinum', fetchPlatinum);
+  const palladiumCd= makeCountdown('palladium',fetchPalladium);
 
   fetchSilver().then(() => silverCd.start());
-  setTimeout(() => fetchGold().then(() => goldCd.start()), 2000);
+  setTimeout(() => fetchGold().then(()      => goldCd.start()),     2000);
+  setTimeout(() => fetchPlatinum().then(()  => platinumCd.start()), 4000);
+  setTimeout(() => fetchPalladium().then(() => palladiumCd.start()),6000);
 </script>
 </body>
 </html>
